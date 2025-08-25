@@ -27,6 +27,8 @@
 
 <script>
 export default {
+  // 認証が必要なページとして設定
+  middleware: 'auth',
   name: 'HomePage',
   data() {
     return {

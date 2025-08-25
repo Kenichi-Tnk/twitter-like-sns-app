@@ -94,3 +94,11 @@ sns-api/vendor/
 sns-api/.env
 sns-api/storage/*.key
 sns-api/bootstrap/cache/*
+
+# Firebase security
+firebase-debug.log
+.firebase/
+
+# Nuxt.js build files
+.nuxt/
+dist/

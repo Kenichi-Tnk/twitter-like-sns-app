@@ -1,4 +1,13 @@
 export default {
+  env: {
+    FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
+    FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
+    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
+    FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
+    FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    FIREBASE_APP_ID: process.env.FIREBASE_APP_ID
+  },
+
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
@@ -29,7 +38,14 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/firebase.js',
+    '~/plugins/auth.js',
+    { src: '~/plugins/auth-persistence.js', mode: 'client' }
   ],
+
+  router: {
+    middleware: ['auth']
+  },
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -51,5 +67,33 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    transpile: [
+      // Firebase関連パッケージをトランスパイル
+      '@firebase/app',
+      '@firebase/auth',
+      '@firebase/component',
+      '@firebase/logger',
+      '@firebase/util'
+    ],
+    extend(config, { isDev, isClient }) {
+      // Optional chaining operator (?.) のサポート
+      config.module.rules.push({
+        test: /\.m?js$/,
+        exclude: /(node_modules)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
+      })
+
+      // Firebase ESModules の適切な処理
+      if (isClient) {
+        config.node = {
+          fs: 'empty'
+        }
+      }
+    }
   }
 }

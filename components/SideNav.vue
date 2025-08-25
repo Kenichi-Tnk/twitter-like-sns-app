@@ -11,9 +11,10 @@
                 <img src="/images/home.png" alt="ホーム" class="nav-icon">
                 <span>ホーム</span>
             </nuxt-link>
-            <button class="nav-item" @click="logout">
+            <button class="nav-item" @click="handleLogout" :disabled="logoutLoading">
                 <img src="/images/logout.png" alt="ログアウト" class="nav-icon">
-                <span>ログアウト</span>
+                <span v-if="!logoutLoading">ログアウト</span>
+                <span v-else>ログアウト中...</span>
             </button>
         </nav>
 
@@ -38,7 +39,8 @@ export default {
   name: 'SideNav',
   data() {
     return {
-      postContent: ''
+      postContent: '',
+      logoutLoading: false
     }
   },
   methods: {
@@ -46,20 +48,61 @@ export default {
       if (!this.postContent.trim()) return
       
       try {
+        // 認証ユーザー情報を使用
+        const userId = this.$store.getters.userId
+        const userDisplayName = this.$store.getters.userDisplayName
+        
+        if (!userId) {
+          console.error('ログインが必要です')
+          return
+        }
+        
         await this.$axios.post('/posts', {
           content: this.postContent,
-          user_id: 'test_user_123',
-          username: 'テストユーザー'
+          user_id: userId,
+          username: userDisplayName || 'ユーザー'
         })
+        
         this.postContent = ''
         this.$emit('post-created')
+        console.log('✅ 投稿が作成されました')
       } catch (error) {
-        console.error('投稿作成エラー:', error)
+        console.error('❌ 投稿作成エラー:', error)
       }
     },
-    logout() {
-      // ログアウト処理
-      console.log('ログアウト処理')
+      async handleLogout() {
+        try {
+          this.logoutLoading = true
+          console.log('🚪 SideNav ログアウト開始')
+          
+          // Vuex store の logout action を呼び出し
+          const result = await this.$store.dispatch('logout')
+          
+          console.log('ログアウト結果:', result)
+          
+          if (result.success) {
+            console.log('✅ ログアウト成功')
+            
+            // Firebase認証状態もクリア確認
+            console.log('Firebase認証状態確認中...')
+            
+            // 少し待ってから遷移
+            setTimeout(() => {
+              console.log('🔄 ログイン画面に遷移')
+              window.location.href = '/login'
+            }, 1000)
+            
+          } else {
+            console.error('❌ ログアウトエラー:', result.error)
+            alert('ログアウトに失敗しました: ' + result.error)
+          }
+          
+        } catch (error) {
+          console.error('❌ ログアウト処理エラー:', error)
+          alert('ログアウトエラーが発生しました')
+        } finally {
+          this.logoutLoading = false
+        }
     }
   }
 }
@@ -122,8 +165,13 @@ export default {
     text-align: left;
 }
 
-.nav-item:hover {
+.nav-item:hover:not(:disabled) {
     background-color: #3e4651;
+}
+
+.nav-item:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .nav-icon {
@@ -187,5 +235,5 @@ export default {
 .share-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    }
+}
 </style>
