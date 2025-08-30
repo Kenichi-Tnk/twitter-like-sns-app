@@ -69,6 +69,12 @@ export default {
         await this.fetchPostDetail()
         await this.fetchComments()
     },
+    computed: {
+        // Vuex から認証ユーザー情報を取得
+        currentUser() {
+            return this.$store.state.user
+        }
+    },
     methods: {
         async fetchPostDetail() {
             try {
@@ -82,7 +88,6 @@ export default {
         async fetchComments() {
             try {
                 const postId = this.$route.params.id
-                // 修正: Laravel のルートに合わせる
                 const response = await this.$axios.get(`/posts/${postId}/comments`)
                 this.comments = response.data.data || []
             } catch (error) {
@@ -93,21 +98,36 @@ export default {
         async addComment() {
             if (!this.newComment.trim()) return
 
+            // 🚨 認証チェック
+            if (!this.currentUser || !this.currentUser.uid) {
+                alert('ログインが必要です')
+                this.$router.push('/login')
+                return
+            }
+
             try {
                 const postId = this.$route.params.id
-                // 修正: 正しいエンドポイントを使用
-                const response = await this.$axios.post('/comments', {
-                    content: this.newComment,
-                    post_id: postId,  // post_id を送信
-                    user_id: 'test_user_123',
-                    username: 'テストユーザー'
+
+                console.log('💬 コメント投稿開始:', {
+                    user_id: this.currentUser.uid,
+                    username: this.currentUser.displayName,
+                    content: this.newComment
                 })
 
-                console.log('コメント投稿成功:', response.data)
+                // ✅ Firebase認証情報を使用
+                const response = await this.$axios.post('/comments', {
+                    content: this.newComment,
+                    post_id: postId,
+                    user_id: this.currentUser.uid,           // Firebase UID
+                    username: this.currentUser.displayName   // Firebase displayName
+                })
+
+                console.log('✅ コメント投稿成功:', response.data)
                 this.newComment = ''
                 await this.fetchComments()
+
             } catch (error) {
-                console.error('コメント投稿エラー:', error)
+                console.error('❌ コメント投稿エラー:', error)
                 console.error('エラー詳細:', error.response?.data)
                 alert('コメントの投稿に失敗しました')
             }

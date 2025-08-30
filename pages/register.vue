@@ -1,80 +1,82 @@
 <template>
-  <div class="auth-container">
-    <div class="auth-card">
-      <div class="auth-logo">
-        <img src="/images/logo.png" alt="SHARE" class="auth-logo-img">
-      </div>
-      
-      <div class="auth-header">
-        <h2 class="auth-title">新規登録</h2>
-        <p class="auth-subtitle">アカウントを作成してください</p>
-      </div>
-      
-      <form class="auth-form" @submit.prevent="register">
-        <div class="form-group">
-          <label for="displayName" class="form-label">表示名</label>
-          <input 
-            id="displayName"
-            v-model="form.displayName"
-            name="displayName" 
-            type="text" 
-            required 
-            class="form-input" 
-            placeholder="表示名を入力"
-          >
-        </div>
+  <div class="auth-page-container">
+    <AuthHeader />
+
+    <div class="auth-content">
+      <div class="auth-card">
+        <!-- ロゴを削除（ヘッダーにあるため） -->
         
-        <div class="form-group">
-          <label for="email" class="form-label">メールアドレス</label>
-          <input 
-            id="email"
-            v-model="form.email"
-            name="email" 
-            type="email" 
-            autocomplete="email" 
-            required 
-            class="form-input" 
-            placeholder="メールアドレスを入力"
-          >
-        </div>
-        
-        <div class="form-group">
-          <label for="password" class="form-label">パスワード</label>
-          <input 
-            id="password"
-            v-model="form.password"
-            name="password" 
-            type="password" 
-            autocomplete="new-password" 
-            required 
-            class="form-input" 
-            placeholder="パスワードを入力（6文字以上）"
-          >
+        <div class="auth-header">
+          <h2 class="auth-title">新規登録</h2>
+          <p class="auth-subtitle">アカウントを作成してください</p>
         </div>
 
-        <div v-if="error" class="alert alert-error">
-          {{ error }}
-        </div>
-        
-        <div v-if="success" class="alert alert-success">
-          {{ success }}
-        </div>
+        <form class="auth-form" @submit.prevent="register">
+          <div class="form-group">
+            <label for="displayName" class="form-label">表示名</label>
+            <input
+              id="displayName"
+              v-model="form.displayName"
+              name="displayName"
+              type="text"
+              required
+              class="form-input"
+              placeholder="表示名を入力"
+            >
+          </div>
 
-        <button 
-          type="submit"
-          :disabled="loading"
-          class="auth-button"
-        >
-          <span v-if="!loading">新規登録</span>
-          <span v-else>登録中...</span>
-        </button>
-      </form>
+          <div class="form-group">
+            <label for="email" class="form-label">メールアドレス</label>
+            <input 
+              id="email"
+              v-model="form.email"
+              name="email" 
+              type="email" 
+              autocomplete="email" 
+              required 
+              class="form-input" 
+              placeholder="メールアドレスを入力"
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="password" class="form-label">パスワード</label>
+            <input 
+              id="password"
+              v-model="form.password"
+              name="password" 
+              type="password" 
+              autocomplete="new-password" 
+              required 
+              class="form-input" 
+              placeholder="パスワードを入力（6文字以上）"
+            >
+          </div>
 
-      <div class="auth-footer">
-        <p class="auth-link-text">
-          すでにアカウントをお持ちの方は
-          <nuxt-link to="/login" class="auth-link">ログイン</nuxt-link>
-        </p>
+          <div v-if="error" class="alert alert-error">
+            {{ error }}
+          </div>
+          
+          <div v-if="success" class="alert alert-success">
+            {{ success }}
+          </div>
+
+          <button 
+            type="submit"
+            :disabled="loading"
+            class="auth-button"
+          >
+            <span v-if="!loading">新規登録</span>
+            <span v-else>登録中...</span>
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p class="auth-link-text">
+            すでにアカウントをお持ちの方は
+            <nuxt-link to="/login" class="auth-link">ログイン</nuxt-link>
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -82,6 +84,9 @@
 
 <script>
 export default {
+  components: { // 修正: Components → components
+    AuthHeader: () => import('~/components/AuthHeader.vue')
+  },
   name: 'RegisterPage',
   layout: 'auth', // 認証専用レイアウト
   data() {
@@ -129,7 +134,7 @@ export default {
           // 少し待ってからリダイレクト
           setTimeout(() => {
             this.$router.push('/')
-          }, 1500)
+          }, 500) // 1500ms → 500ms に短縮
         } else {
           this.error = this.getErrorMessage(result.error)
           console.error('❌ 登録失敗:', result.error)
@@ -160,13 +165,19 @@ export default {
 </script>
 
 <style scoped>
-/* login.vue と同じスタイル */
-.auth-container {
+/* 境界線を削除した統一スタイル */
+.auth-page-container {
   min-height: 100vh;
+  background: #0f1419;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-content {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0f1419;
   padding: 20px;
 }
 
@@ -178,17 +189,6 @@ export default {
   border-radius: 16px;
   padding: 32px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-
-.auth-logo {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-
-.auth-logo-img {
-  width: 80px;
-  height: auto;
 }
 
 .auth-header {
@@ -314,5 +314,20 @@ export default {
 
 .auth-link:hover {
   color: #6d28d9;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 480px) {
+  .auth-content {
+    padding: 16px;
+  }
+  
+  .auth-card {
+    padding: 24px;
+  }
+  
+  .auth-title {
+    font-size: 1.75rem;
+  }
 }
 </style>

@@ -1,74 +1,77 @@
 <template>
-    <div class="auth-container">
-        <div class="auth-card">
-        <div class="auth-logo">
-            <img src="/images/logo.png" alt="SHARE" class="auth-logo-img">
-        </div>
+    <div class="auth-page-container">
+        <AuthHeader />
 
-        <div class="auth-header">
-            <h2 class="auth-title">ログイン</h2>
-            <p class="auth-subtitle">アカウントにログインしてください</p>
-        </div>
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2 class="auth-title">ログイン</h2>
+                    <p class="auth-subtitle">アカウントにログインしてください</p>
+                </div>
 
-        <form class="auth-form" @submit.prevent="login">
-            <div class="form-group">
-            <label for="email" class="form-label">メールアドレス</label>
-            <input
-                id="email"
-                v-model="form.email"
-                name="email"
-                type="email"
-                autocomplete="email"
-                required
-                class="form-input"
-                placeholder="メールアドレスを入力"
-            >
+                <form class="auth-form" @submit.prevent="login">
+                    <div class="form-group">
+                        <label for="email" class="form-label">メールアドレス</label>
+                        <input
+                            id="email"
+                            v-model="form.email"
+                            name="email"
+                            type="email"
+                            autocomplete="email"
+                            required
+                            class="form-input"
+                            placeholder="メールアドレスを入力"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">パスワード</label>
+                        <input
+                            id="password"
+                            v-model="form.password"
+                            name="password"
+                            type="password"
+                            autocomplete="current-password"
+                            required
+                            class="form-input"
+                            placeholder="パスワードを入力"
+                        >
+                    </div>
+
+                    <div v-if="error" class="alert alert-error">
+                    {{ error }}
+                    </div>
+
+                    <div v-if="success" class="alert alert-success">
+                    {{ success }}
+                    </div>
+
+                    <button
+                    type="submit"
+                    :disabled="loading"
+                    class="auth-button"
+                    >
+                    <span v-if="!loading">ログイン</span>
+                    <span v-else>ログイン中...</span>
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <p class="auth-link-text">
+                    アカウントをお持ちでない方は
+                    <nuxt-link to="/register" class="auth-link">新規登録</nuxt-link>
+                    </p>
+                </div>
             </div>
-
-            <div class="form-group">
-            <label for="password" class="form-label">パスワード</label>
-            <input 
-                id="password"
-                v-model="form.password"
-                name="password"
-                type="password"
-                autocomplete="current-password"
-                required
-                class="form-input"
-                placeholder="パスワードを入力"
-            >
-            </div>
-
-            <div v-if="error" class="alert alert-error">
-            {{ error }}
-            </div>
-
-            <div v-if="success" class="alert alert-success">
-            {{ success }}
-            </div>
-
-            <button
-            type="submit"
-            :disabled="loading"
-            class="auth-button"
-            >
-            <span v-if="!loading">ログイン</span>
-            <span v-else>ログイン中...</span>
-            </button>
-        </form>
-
-        <div class="auth-footer">
-            <p class="auth-link-text">
-            アカウントをお持ちでない方は
-            <nuxt-link to="/register" class="auth-link">新規登録</nuxt-link>
-            </p>
-        </div>
         </div>
     </div>
 </template>
 
 <script>
 export default {
+    Components: {
+        AuthHeader: () => import('~/components/AuthHeader.vue')
+    },
     name: 'LoginPage',
     layout: 'auth', // 認証専用レイアウト
     data() {
@@ -140,8 +143,15 @@ export default {
 </script>
 
 <style scoped>
-.auth-container {
+.auth-page-container {
     min-height: 100vh;
+    background: #0f1419;
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-container {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
