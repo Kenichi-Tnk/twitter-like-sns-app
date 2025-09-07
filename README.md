@@ -1,69 +1,72 @@
 # twitter-sns-app
 
-## Build Setup
+> ⚠️ **このプロジェクトは Nuxt2 を使用しています。**
+> Nuxt3 ではなく Nuxt2 のインストールを行ってください。
+
+## Nuxt2 のインストール方法
 
 ```bash
-# install dependencies
+# Nuxt2 を明示的にインストールする場合
+$ yarn add nuxt@2
+# または npm を使う場合
+$ npm install nuxt@2
+```
+
+## セットアップ手順
+
+```bash
+# 依存パッケージのインストール
 $ yarn install
 
-# serve with hot reload at localhost:3000
+# 開発サーバーを起動（ホットリロード対応、localhost:3000）
 $ yarn dev
 
-# build for production and launch server
+# 本番用ビルド & サーバー起動
 $ yarn build
 $ yarn start
 
-# generate static project
+# 静的サイトの生成
 $ yarn generate
 ```
 
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
+詳細な使い方や設定については [Nuxt.js 公式ドキュメント](https://nuxtjs.org) をご参照ください。
 
-## Special Directories
+## 主なディレクトリ構成
 
-You can create the following extra directories, some of which have special behaviors. Only `pages` is required; you can delete them if you don't want to use their functionality.
+以下のディレクトリは用途ごとに分かれています。`pages` ディレクトリは必須ですが、他は必要に応じて追加・削除できます。
 
 ### `assets`
 
-The assets directory contains your uncompiled assets such as Stylus or Sass files, images, or fonts.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/assets).
+未加工の CSS（Stylus/Sass 等）、画像、フォントなどを格納します。
+詳しくは [公式ドキュメント](https://nuxtjs.org/docs/2.x/directory-structure/assets) を参照。
 
 ### `components`
 
-The components directory contains your Vue.js components. Components make up the different parts of your page and can be reused and imported into your pages, layouts and even other components.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/components).
+Vue.js コンポーネントを格納します。ページやレイアウト、他のコンポーネントから再利用できます。
+詳しくは [公式ドキュメント](https://nuxtjs.org/docs/2.x/directory-structure/components) を参照。
 
 ### `layouts`
 
-Layouts are a great help when you want to change the look and feel of your Nuxt app, whether you want to include a sidebar or have distinct layouts for mobile and desktop.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/layouts).
-
+アプリ全体のレイアウト（サイドバーやモバイル/デスクトップ用など）を定義します。
+詳しくは [公式ドキュメント](https://nuxtjs.org/docs/2.x/directory-structure/layouts) を参照。
 
 ### `pages`
 
-This directory contains your application views and routes. Nuxt will read all the `*.vue` files inside this directory and setup Vue Router automatically.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/get-started/routing).
+アプリの画面・ルーティングを定義します。`*.vue` ファイルを配置すると自動で Vue Router に登録されます。
+詳しくは [公式ドキュメント](https://nuxtjs.org/docs/2.x/get-started/routing) を参照。
 
 ### `plugins`
 
-The plugins directory contains JavaScript plugins that you want to run before instantiating the root Vue.js Application. This is the place to add Vue plugins and to inject functions or constants. Every time you need to use `Vue.use()`, you should create a file in `plugins/` and add its path to plugins in `nuxt.config.js`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/plugins).
+Vue.js のプラグインや、アプリ起動前に実行したい JS ファイルを格納します。`Vue.use()` したい場合はここにファイルを作成し、`nuxt.config.js` の plugins にパスを追加します。
+詳しくは [公式ドキュメント](https://nuxtjs.org/docs/2.x/directory-structure/plugins) を参照。
 
 ### `static`
 
-This directory contains your static files. Each file inside this directory is mapped to `/`.
-
-Example: `/static/robots.txt` is mapped as `/robots.txt`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/static).
+静的ファイル（画像や robots.txt など）を格納します。各ファイルは `/` パスにマッピングされます。
+例: `/static/robots.txt` → `/robots.txt` でアクセス可能。
+詳しくは [公式ドキュメント](https://nuxtjs.org/docs/2.x/directory-structure/static) を参照。
 
 ### `store`
 
-This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
+Vuex ストア関連ファイルを格納します。ファイルを作成すると自動的に Vuex が有効化されます。
+詳しくは [公式ドキュメント](https://nuxtjs.org/docs/2.x/directory-structure/store) を参照。

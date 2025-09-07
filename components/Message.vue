@@ -22,9 +22,6 @@
                 <img src="/images/detail.png" alt="コメント" class="action-icon">
                 <span>{{ message.comments_count }}</span>
             </button>
-            <button class="action-btn share-btn">
-                <img src="/images/detail.png" alt="詳細" class="action-icon">
-            </button>
         </div>
     </div>
 </template>
@@ -40,23 +37,55 @@ export default {
     },
     methods: {
         async toggleLike() {
+            // 🔥 認証チェック
+            if (!this.$store.state.user) {
+                alert('ログインが必要です')
+                this.$router.push('/login')
+                return
+            }
+
             try {
-                await this.$axios.post('/likes', {
-                user_id: 'test_user_123',
-                post_id: this.message.id
+                console.log('🔍 いいね処理開始:', {
+                    user_id: this.$store.state.user.uid,
+                    username: this.$store.state.user.displayName,
+                    post_id: this.message.id
                 })
+
+                await this.$axios.post('/likes', {
+                    user_id: this.$store.state.user.uid,  // 🔥 実際のFirebase UID
+                    username: this.$store.state.user.displayName, // 🔥 実際のユーザー名
+                    post_id: this.message.id
+                })
+
+                console.log('✅ いいね処理成功')
                 this.$emit('like-updated')
+
             } catch (error) {
-                console.error('いいねエラー:', error)
+                console.error('❌ いいねエラー:', error)
+
+                if (error.response?.status === 401) {
+                    alert('認証が必要です')
+                    this.$router.push('/login')
+                }
             }
         },
         async deletePost() {
+            // 🔥 認証チェック
+            if (!this.$store.state.user) {
+                alert('ログインが必要です')
+                this.$router.push('/login')
+                return
+            }
+
             if (confirm('この投稿を削除しますか？')) {
                 try {
+                    console.log('🗑️ 投稿削除開始:', this.message.id)
+
                     await this.$axios.delete(`/posts/${this.message.id}`)
+                    console.log('✅ 投稿削除成功')
                     this.$emit('like-updated') // 投稿一覧を再取得
                 } catch (error) {
-                    console.error('投稿削除エラー:', error)
+                    console.error('❌ 投稿削除エラー:', error)
                 }
             }
         },

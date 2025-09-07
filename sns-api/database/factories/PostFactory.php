@@ -15,6 +15,21 @@ class PostFactory extends Factory
     {
         $faker = \Faker\Factory::create('ja_JP');
 
+        // 本物のFirebase UID
+        $realFirebaseUids = [
+            'BVJDvWI8a8XaFQPsKA67Q2nFNCU2',
+            'gGvamvkKIccZSZKSytB5Vo7CE292',
+        ];
+
+        // ダミーのFirebase UIDを生成
+        $fakerFirebaseUids = [];
+        for ($i = 0; $i < 8; $i++) {
+            $fakerFirebaseUids[] = $faker->regexify('[A-Za-z0-9]{28}');
+        }
+
+        // 全てのUIDを結合
+        $allUids = array_merge($realFirebaseUids, $fakerFirebaseUids);
+
         $contents = [
             '今日はとてもいい天気ですね！☀️',
             'プログラミングの勉強を頑張っています💻',
@@ -39,7 +54,8 @@ class PostFactory extends Factory
         ];
 
         return [
-            'user_id' => 'firebase_uid_' . $faker->unique()->numberBetween(100000, 999999),
+            // user_idはallUidsからランダムに選択
+            'user_id' => $allUids[array_rand($allUids)],
             'username' => $faker->name(), // 日本人名自動生成
             'content' => $contents[array_rand($contents)],
             'created_at' => $faker->dateTimeBetween('-2 months', 'now'),

@@ -8,12 +8,10 @@
         
         <div class="auth-header">
           <h2 class="auth-title">新規登録</h2>
-          <p class="auth-subtitle">アカウントを作成してください</p>
         </div>
 
         <form class="auth-form" @submit.prevent="register">
           <div class="form-group">
-            <label for="displayName" class="form-label">表示名</label>
             <input
               id="displayName"
               v-model="form.displayName"
@@ -21,12 +19,11 @@
               type="text"
               required
               class="form-input"
-              placeholder="表示名を入力"
+              placeholder="ユーザーネーム"
             >
           </div>
 
           <div class="form-group">
-            <label for="email" class="form-label">メールアドレス</label>
             <input 
               id="email"
               v-model="form.email"
@@ -35,21 +32,20 @@
               autocomplete="email" 
               required 
               class="form-input" 
-              placeholder="メールアドレスを入力"
+              placeholder="メールアドレス"
             >
           </div>
-          
+
           <div class="form-group">
-            <label for="password" class="form-label">パスワード</label>
-            <input 
+            <input
               id="password"
               v-model="form.password"
-              name="password" 
-              type="password" 
-              autocomplete="new-password" 
+              name="password"
+              type="password"
+              autocomplete="new-password"
               required 
               class="form-input" 
-              placeholder="パスワードを入力（6文字以上）"
+              placeholder="パスワード"
             >
           </div>
 
@@ -184,8 +180,8 @@ export default {
 .auth-card {
   width: 100%;
   max-width: 400px;
-  background: #1a1a1a;
-  border: 1px solid #3e4651;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 16px;
   padding: 32px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
@@ -197,15 +193,15 @@ export default {
 }
 
 .auth-title {
-  font-size: 2rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  color: #ffffff;
+  color: #1f2937;
   margin: 0 0 8px 0;
 }
 
 .auth-subtitle {
   font-size: 0.9rem;
-  color: #9ca3af;
+  color: #6b7280;
   margin: 0;
 }
 
@@ -230,10 +226,10 @@ export default {
 .form-input {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid #3e4651;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  background: #0f1419;
-  color: #ffffff;
+  background: #ffffff;
+  color: #1f2937;
   font-size: 1rem;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -245,7 +241,7 @@ export default {
 }
 
 .form-input::placeholder {
-  color: #6b7280;
+  color: #9ca3af;
 }
 
 .alert {
@@ -296,12 +292,12 @@ export default {
   text-align: center;
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid #3e4651;
+  border-top: 1px solid #e5e7eb;
 }
 
 .auth-link-text {
   font-size: 0.9rem;
-  color: #9ca3af;
+  color: #6b7280;
   margin: 0;
 }
 
@@ -321,11 +317,11 @@ export default {
   .auth-content {
     padding: 16px;
   }
-  
+
   .auth-card {
     padding: 24px;
   }
-  
+
   .auth-title {
     font-size: 1.75rem;
   }
