@@ -8,9 +8,7 @@
             <!-- ヘッダー -->
             <header class="header">
                 <div class="header-content">
-                    <button @click="$router.go(-1)" class="back-btn">
-                        <img src="/images/cross.png" alt="戻る" class="back-icon">
-                    </button>
+                    <!-- 戻るボタン（×）はスクール仕様に合わせて削除 -->
                     <h1 class="header-title">コメント</h1>
                 </div>
             </header>
@@ -19,7 +17,7 @@
             <div class="post-detail-container">
                 <!-- 元投稿 -->
                 <div v-if="post" class="original-post">
-                    <Message :message="post" @like-updated="fetchPostDetail" />
+                    <Message :message="post" @like-updated="fetchPostDetail" :show-comment-btn="false" />
                 </div>
 
                 <!-- コメント一覧 -->

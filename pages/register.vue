@@ -4,8 +4,7 @@
 
     <div class="auth-content">
       <div class="auth-card">
-        <!-- ロゴを削除（ヘッダーにあるため） -->
-        
+
         <div class="auth-header">
           <h2 class="auth-title">新規登録</h2>
         </div>
@@ -24,14 +23,14 @@
           </div>
 
           <div class="form-group">
-            <input 
+            <input
               id="email"
               v-model="form.email"
-              name="email" 
-              type="email" 
-              autocomplete="email" 
-              required 
-              class="form-input" 
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              class="form-input"
               placeholder="メールアドレス"
             >
           </div>
@@ -43,8 +42,8 @@
               name="password"
               type="password"
               autocomplete="new-password"
-              required 
-              class="form-input" 
+              required
+              class="form-input"
               placeholder="パスワード"
             >
           </div>
@@ -52,12 +51,12 @@
           <div v-if="error" class="alert alert-error">
             {{ error }}
           </div>
-          
+
           <div v-if="success" class="alert alert-success">
             {{ success }}
           </div>
 
-          <button 
+          <button
             type="submit"
             :disabled="loading"
             class="auth-button"
@@ -80,11 +79,11 @@
 
 <script>
 export default {
-  components: { // 修正: Components → components
+  components: {
     AuthHeader: () => import('~/components/AuthHeader.vue')
   },
   name: 'RegisterPage',
-  layout: 'auth', // 認証専用レイアウト
+  layout: 'auth',
   data() {
     return {
       form: {
@@ -114,7 +113,7 @@ export default {
 
         // authServiceを動的インポート
         const { authService } = await import('~/plugins/auth.js')
-        
+
         const result = await authService.register(
           this.form.email,
           this.form.password,
@@ -126,7 +125,7 @@ export default {
         if (result.success) {
           this.success = '登録が完了しました！ホーム画面に移動します...'
           console.log('✅ 登録成功 - ホーム画面に遷移')
-          
+
           // 少し待ってからリダイレクト
           setTimeout(() => {
             this.$router.push('/')
@@ -143,7 +142,7 @@ export default {
         this.loading = false
       }
     },
-    
+
     getErrorMessage(error) {
       if (error.includes('email-already-in-use')) {
         return 'このメールアドレスは既に使用されています'

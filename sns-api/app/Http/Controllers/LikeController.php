@@ -89,34 +89,6 @@ class LikeController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        // 個別のいいね情報は不要なため実装しない
-        return response()->json([
-            'message' => 'このエンドポイントは使用されていません'
-        ], 404);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        // いいねの更新は不要なため実装しない
-        return response()->json([
-            'message' => 'このエンドポイントは使用されていません'
-        ], 404);
-    }
 
     /**
      * Remove the specified resource from storage.

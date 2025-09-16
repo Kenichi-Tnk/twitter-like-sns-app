@@ -1,27 +1,25 @@
 <template>
     <div class="post-item">
-        <div class="post-header">
-            <img src="/images/profile.png" alt="プロフィール" class="user-avatar">
-            <div class="user-info">
-                <span class="username">{{ message.username }}</span>
-                <span class="timestamp">{{ formatDate(message.created_at) }}</span>
+        <div class="post-header post-header--row compact">
+            <img src="/images/profile.png" alt="プロフィール" class="user-avatar compact-avatar">
+            <span class="username compact-username">{{ message.username }}</span>
+            <div class="post-actions post-actions--row compact-actions">
+                <button @click="toggleLike" class="action-btn like-btn compact-btn">
+                    <img src="/images/heart.png" alt="いいね" class="action-icon compact-icon">
+                    <span>{{ message.likes_count }}</span>
+                </button>
+                <button @click="deletePost" class="action-btn delete-btn compact-btn">
+                    <img src="/images/cross.png" alt="削除" class="action-icon compact-icon">
+                </button>
+                <button v-if="showCommentBtn !== false" @click="viewPost" class="action-btn comment-btn compact-btn">
+                    <img src="/images/detail.png" alt="コメント" class="action-icon compact-icon">
+                    <span>{{ message.comments_count }}</span>
+                </button>
             </div>
         </div>
-        <div class="post-content">
+        <div class="timestamp compact-timestamp">{{ formatDate(message.created_at) }}</div>
+        <div class="post-content compact-content">
             {{ message.content }}
-        </div>
-        <div class="post-actions">
-            <button @click="toggleLike" class="action-btn like-btn">
-                <img src="/images/heart.png" alt="いいね" class="action-icon">
-                <span>{{ message.likes_count }}</span>
-            </button>
-            <button @click="deletePost" class="action-btn delete-btn">
-                <img src="/images/cross.png" alt="削除" class="action-icon">
-            </button>
-            <button @click="viewPost" class="action-btn comment-btn">
-                <img src="/images/detail.png" alt="コメント" class="action-icon">
-                <span>{{ message.comments_count }}</span>
-            </button>
         </div>
     </div>
 </template>
@@ -33,6 +31,10 @@ export default {
         message: {
             type: Object,
             required: true
+        },
+        showCommentBtn: {
+            type: Boolean,
+            default: true
         }
     },
     methods: {
@@ -120,11 +122,52 @@ export default {
     background: #3e4651;
 }
 
+/* ヘッダーを横並びにし、アクションボタンも右側に配置 */
 .post-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
+}
+.post-header--row.compact {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 2px;
+}
+.compact-avatar {
+    width: 28px;
+    height: 28px;
+    margin-right: 4px;
+}
+.compact-username {
+    font-weight: bold;
+    color: #ffffff;
+    margin-right: 6px;
+    font-size: 1rem;
+}
+.post-actions.compact-actions {
+    gap: 8px;
+}
+.compact-btn {
+    padding: 2px 6px;
+    font-size: 0.95em;
+}
+.compact-icon {
+    width: 14px;
+    height: 14px;
+}
+.compact-timestamp {
+    color: #9ca3af;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+    margin-left: 32px;
+}
+.compact-content {
+    margin-bottom: 8px;
+    margin-left: 32px;
+    line-height: 1.5;
+    color: #ffffff;
 }
 
 .user-avatar {
