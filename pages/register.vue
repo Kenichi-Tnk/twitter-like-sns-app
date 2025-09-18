@@ -1,71 +1,70 @@
 <template>
   <div class="auth-page-container">
     <AuthHeader />
-
     <div class="auth-content">
       <div class="auth-card">
-
         <div class="auth-header">
           <h2 class="auth-title">新規登録</h2>
         </div>
-
-        <form class="auth-form" @submit.prevent="register">
-          <div class="form-group">
-            <input
-              id="displayName"
-              v-model="form.displayName"
-              name="displayName"
-              type="text"
-              required
-              class="form-input"
-              placeholder="ユーザーネーム"
+        <ValidationObserver v-slot="{ invalid, handleSubmit }">
+          <form class="auth-form" @submit.prevent="handleSubmit(register)">
+            <div class="form-group">
+              <ValidationProvider name="ユーザーネーム" rules="required|max:20" v-slot="{ errors }">
+                <input
+                  id="displayName"
+                  v-model="form.displayName"
+                  name="displayName"
+                  type="text"
+                  class="form-input"
+                  placeholder="ユーザーネーム"
+                >
+                <span class="error" v-if="errors[0]">{{ errors[0] }}</span>
+              </ValidationProvider>
+            </div>
+            <div class="form-group">
+              <ValidationProvider name="メールアドレス" rules="required|email" v-slot="{ errors }">
+                <input
+                  id="email"
+                  v-model="form.email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  class="form-input"
+                  placeholder="メールアドレス"
+                >
+                <span class="error" v-if="errors[0]">{{ errors[0] }}</span>
+              </ValidationProvider>
+            </div>
+            <div class="form-group">
+              <ValidationProvider name="パスワード" rules="required|min:6" v-slot="{ errors }">
+                <input
+                  id="password"
+                  v-model="form.password"
+                  name="password"
+                  type="password"
+                  autocomplete="new-password"
+                  class="form-input"
+                  placeholder="パスワード"
+                >
+                <span class="error" v-if="errors[0]">{{ errors[0] }}</span>
+              </ValidationProvider>
+            </div>
+            <div v-if="error" class="alert alert-error">
+              {{ error }}
+            </div>
+            <div v-if="success" class="alert alert-success">
+              {{ success }}
+            </div>
+            <button
+              type="submit"
+              :disabled="loading || invalid"
+              class="auth-button"
             >
-          </div>
-
-          <div class="form-group">
-            <input
-              id="email"
-              v-model="form.email"
-              name="email"
-              type="email"
-              autocomplete="email"
-              required
-              class="form-input"
-              placeholder="メールアドレス"
-            >
-          </div>
-
-          <div class="form-group">
-            <input
-              id="password"
-              v-model="form.password"
-              name="password"
-              type="password"
-              autocomplete="new-password"
-              required
-              class="form-input"
-              placeholder="パスワード"
-            >
-          </div>
-
-          <div v-if="error" class="alert alert-error">
-            {{ error }}
-          </div>
-
-          <div v-if="success" class="alert alert-success">
-            {{ success }}
-          </div>
-
-          <button
-            type="submit"
-            :disabled="loading"
-            class="auth-button"
-          >
-            <span v-if="!loading">新規登録</span>
-            <span v-else>登録中...</span>
-          </button>
-        </form>
-
+              <span v-if="!loading">新規登録</span>
+              <span v-else>登録中...</span>
+            </button>
+          </form>
+        </ValidationObserver>
         <div class="auth-footer">
           <p class="auth-link-text">
             すでにアカウントをお持ちの方は
@@ -78,9 +77,20 @@
 </template>
 
 <script>
+import { ValidationObserver, ValidationProvider, extend } from 'vee-validate';
+import { required, email, max, min } from 'vee-validate/dist/rules';
+
+// ルール登録
+extend('required', required);
+extend('email', email);
+extend('max', max);
+extend('min', min);
+
 export default {
   components: {
-    AuthHeader: () => import('~/components/AuthHeader.vue')
+    AuthHeader: () => import('~/components/AuthHeader.vue'),
+    ValidationObserver,
+    ValidationProvider
   },
   name: 'RegisterPage',
   layout: 'auth',
@@ -103,14 +113,6 @@ export default {
         this.error = null
         this.success = null
 
-        console.log('🔄 登録開始:', this.form.email)
-
-        // バリデーション
-        if (this.form.password.length < 6) {
-          this.error = 'パスワードは6文字以上で入力してください'
-          return
-        }
-
         // authServiceを動的インポート
         const { authService } = await import('~/plugins/auth.js')
 
@@ -120,29 +122,21 @@ export default {
           this.form.displayName
         )
 
-        console.log('📝 登録結果:', result)
-
         if (result.success) {
           this.success = '登録が完了しました！ホーム画面に移動します...'
-          console.log('✅ 登録成功 - ホーム画面に遷移')
-
-          // 少し待ってからリダイレクト
           setTimeout(() => {
             this.$router.push('/')
-          }, 500) // 1500ms → 500ms に短縮
+          }, 500)
         } else {
           this.error = this.getErrorMessage(result.error)
-          console.error('❌ 登録失敗:', result.error)
         }
 
       } catch (error) {
         this.error = 'エラーが発生しました: ' + error.message
-        console.error('❌ 登録エラー:', error)
       } finally {
         this.loading = false
       }
     },
-
     getErrorMessage(error) {
       if (error.includes('email-already-in-use')) {
         return 'このメールアドレスは既に使用されています'
@@ -241,6 +235,12 @@ export default {
 
 .form-input::placeholder {
   color: #9ca3af;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 0.9rem;
+  margin-top: 4px;
 }
 
 .alert {

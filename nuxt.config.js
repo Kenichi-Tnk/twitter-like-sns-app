@@ -40,6 +40,7 @@ export default {
   plugins: [
     '~/plugins/firebase.js',
     '~/plugins/auth.js',
+    '~/plugins/vee-validate.js',
     { src: '~/plugins/auth-persistence.js', mode: 'client' }
   ],
 

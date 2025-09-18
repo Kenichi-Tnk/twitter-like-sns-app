@@ -8,50 +8,65 @@
                     <h2 class="auth-title">ログイン</h2>
                 </div>
 
-                <form class="auth-form" @submit.prevent="login">
-                    <div class="form-group">
-                        <input
-                            id="email"
-                            v-model="form.email"
-                            name="email"
-                            type="email"
-                            autocomplete="email"
-                            required
-                            class="form-input"
-                            placeholder="メールアドレス"
+
+                <ValidationObserver v-slot="{ invalid }">
+                    <form class="auth-form" @submit.prevent="login">
+                        <div class="form-group">
+                            <ValidationProvider
+                                name="メールアドレス"
+                                rules="required|email"
+                                v-slot="{ errors }"
+                            >
+                                <input
+                                    id="email"
+                                    v-model="form.email"
+                                    name="email"
+                                    type="email"
+                                    autocomplete="email"
+                                    class="form-input"
+                                    placeholder="メールアドレス"
+                                >
+                                <span v-if="errors[0]" class="error">{{ errors[0] }}</span>
+                            </ValidationProvider>
+                        </div>
+
+                        <div class="form-group">
+                            <ValidationProvider
+                                name="パスワード"
+                                rules="required|min:6"
+                                v-slot="{ errors }"
+                            >
+                                <input
+                                    id="password"
+                                    v-model="form.password"
+                                    name="password"
+                                    type="password"
+                                    autocomplete="current-password"
+                                    class="form-input"
+                                    placeholder="パスワード"
+                                >
+                                <span v-if="errors[0]" class="error">{{ errors[0] }}</span>
+                            </ValidationProvider>
+                        </div>
+
+                        <div v-if="error" class="error">
+                            {{ error }}
+                        </div>
+
+                        <div v-if="success" class="alert alert-success">
+                            {{ success }}
+                        </div>
+
+                        <button
+                            type="submit"
+                            :disabled="loading || invalid"
+                            class="auth-button"
                         >
-                    </div>
-
-                    <div class="form-group">
-                        <input
-                            id="password"
-                            v-model="form.password"
-                            name="password"
-                            type="password"
-                            autocomplete="current-password"
-                            required
-                            class="form-input"
-                            placeholder="パスワード"
-                        >
-                    </div>
-
-                    <div v-if="error" class="alert alert-error">
-                    {{ error }}
-                    </div>
-
-                    <div v-if="success" class="alert alert-success">
-                    {{ success }}
-                    </div>
-
-                    <button
-                    type="submit"
-                    :disabled="loading"
-                    class="auth-button"
-                    >
-                    <span v-if="!loading">ログイン</span>
-                    <span v-else>ログイン中...</span>
-                    </button>
-                </form>
+                            <span v-if="!loading">ログイン</span>
+                            <span v-else>ログイン中...</span>
+                        </button>
+                    </form>
+                </ValidationObserver>
 
                 <div class="auth-footer">
                     <p class="auth-link-text">
@@ -65,12 +80,16 @@
 </template>
 
 <script>
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
+
 export default {
-    Components: {
-        AuthHeader: () => import('~/components/AuthHeader.vue')
+    components: {
+        AuthHeader: () => import('~/components/AuthHeader.vue'),
+        ValidationProvider,
+        ValidationObserver
     },
     name: 'LoginPage',
-    layout: 'auth', // 認証専用レイアウト
+    layout: 'auth',
     data() {
         return {
             form: {
@@ -83,46 +102,32 @@ export default {
         }
     },
     methods: {
-       // pages/login.vue の login メソッドを修正
         async login() {
-        try {
-            this.loading = true
-            this.error = null
-            this.success = null
+            try {
+                this.loading = true
+                this.error = null
+                this.success = null
 
-            console.log('🔄 ログイン開始:', this.form.email)
+                const { authService } = await import('~/plugins/auth.js')
+                const result = await authService.login(
+                    this.form.email,
+                    this.form.password
+                )
 
-            const { authService } = await import('~/plugins/auth.js')
-            
-            const result = await authService.login(
-            this.form.email,
-            this.form.password
-            )
-
-            console.log('🔑 ログイン結果:', result)
-
-            if (result.success) {
-            this.success = 'ログインしました！'
-            console.log('✅ ログイン成功')
-            
-            // Firebase認証状態の反映を短時間待つだけ
-            setTimeout(() => {
-                this.$router.push('/')
-            }, 500) // 1500ms から 500ms に短縮
-            
-            } else {
-            this.error = this.getErrorMessage(result.error)
-            console.error('❌ ログイン失敗:', result.error)
+                if (result.success) {
+                    this.success = 'ログインしました！'
+                    setTimeout(() => {
+                        this.$router.push('/')
+                    }, 500)
+                } else {
+                    this.error = this.getErrorMessage(result.error)
+                }
+            } catch (error) {
+                this.error = 'エラーが発生しました: ' + error.message
+            } finally {
+                this.loading = false
             }
-
-        } catch (error) {
-            this.error = 'エラーが発生しました: ' + error.message
-            console.error('❌ ログインエラー:', error)
-        } finally {
-            this.loading = false
-        }
         },
-
         getErrorMessage(error) {
             if (error.includes('user-not-found')) {
                 return 'アカウントが見つかりません'
@@ -133,6 +138,9 @@ export default {
             if (error.includes('invalid-email')) {
                 return '有効なメールアドレスを入力してください'
             }
+            if (error.includes('invalid-credential')) {
+                return 'メールアドレスまたはパスワードが正しくありません'
+            }
             return error || 'ログインに失敗しました'
         }
     }
@@ -140,6 +148,11 @@ export default {
 </script>
 
 <style scoped>
+.error {
+    color: #ef4444;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
 .auth-page-container {
     min-height: 100vh;
     background: #0f1419;
